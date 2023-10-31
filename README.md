@@ -193,11 +193,11 @@ MBR decoding is notoriously slow. **mbr** implements some optimizations:
 
 ## Example scripts
 
-The experiments directory contains the code for reproductions of experiments from the following papers:
+The [experiments](experiments) directory contains the code for reproductions of experiments from the following papers:
 
-- MBR for (low-resource) machine translation ([Müller & Sennrich, 2021](https://aclanthology.org/2021.acl-long.22/))
-- MBR with neural metrics and epsilon sampling for machine translation ([Freitag et al., 2023](https://arxiv.org/abs/2305.09860))
-- MBR for summarization ([Bertsch et al., 2023](https://arxiv.org/abs/2310.01387))
+- [MBR for (low-resource) machine translation](experiments/müller-sennrich-2021-understanding) ([Müller & Sennrich, 2021](https://aclanthology.org/2021.acl-long.22/))
+- [MBR with neural metrics and epsilon sampling for machine translation](experiments/freitag-et-al-2023-epsilon) ([Freitag et al., 2023](https://arxiv.org/abs/2305.09860))
+- [MBR for summarization](experiments/bertsch-et-al-2023-mbr) ([Bertsch et al., 2023](https://arxiv.org/abs/2310.01387))
 
 ## Related projects
 - https://github.com/roxot/mbr-nmt: Original implementation ([demo](https://colab.research.google.com/github/probabll/demo-mbr-nmt/blob/main/German-English.ipynb))
