@@ -1,0 +1,27 @@
+[project]
+name = "mbr"
+version = "0.0.1"
+authors = [
+  { name="Jannis Vamvas", email="vamvas@cl.uzh.ch" },
+]
+description = "Minimum Bayes risk decoding for Hugging Face Transformers"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "transformers",
+    "evaluate",
+    "sacrebleu",
+    "tqdm",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ZurichNLP/mbr"
+"Bug Tracker" = "https://github.com/ZurichNLP/mbr/issues"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
