@@ -15,9 +15,6 @@ This directory uses the [**mbr**](https://github.com/ZurichNLP/mbr) package to r
 
 ## Results
 
-| Method             |  ROUGE-1 (original) | ROUGE-1 (reproduction) |
-|:-------------------|--------------------:|-----------------------:|
-| Greedy             |               43.98 |                  43.20 |
-| Beam search (k=5)  |               43.16 |                  42.56 |
-| Beam search (k=10) |               42.62 |                    tba |
-| MBR ROUGE-1        |               46.89 |                  46.04 |
+|                              Paper                              | Reproduction |
+|:---------------------------------------------------------------:|:---:|
+| ![CNN DM original](results/figures/CNN%20DM%20original.png) | ![CNN DM reproduction](results/figures/CNN%20DM%20reproduction.png) |
