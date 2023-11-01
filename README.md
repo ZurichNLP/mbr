@@ -1,5 +1,5 @@
 # mbr 🔥
-![Main](https://github.com/ZurichNLP/mbr/workflows/unittest/badge.svg?branch=main)
+![Main](https://github.com/ZurichNLP/mbr/workflows/unittest/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/mbr)](https://pypi.python.org/pypi/mbr/)
 
 **mbr** adds Sampling-based Minimum Bayes Risk decoding to [Hugging Face transformers](https://github.com/huggingface/transformers). Originally proposed by [Eikema & Aziz (2022)](https://aclanthology.org/2022.emnlp-main.754/), this technique is a risk-minimizing algorithm for generating text with a language model.
