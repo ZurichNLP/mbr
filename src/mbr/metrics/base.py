@@ -1,15 +1,30 @@
 import functools
-from typing import Tuple, Union, List
+from dataclasses import dataclass
+from typing import Tuple, Union, List, Optional
 
 import evaluate
 import torch
 from datasets import Metric
 from evaluate import EvaluationModule
 from transformers import PreTrainedTokenizerBase
+from transformers.utils import ModelOutput
 
 from mbr import MBRGenerationConfig
 
 MetricType = Union[Metric, EvaluationModule]
+
+
+@dataclass
+class MetricOutput(ModelOutput):
+    """
+    Args:
+        scores (`torch.FloatTensor` of shape `(batch_size, num_samples)`):
+            The metric scores for each sample (aggregated over all references).
+        scores_per_reference (`torch.FloatTensor` of shape `(batch_size, num_samples, num_references)`):
+            The pairwise metric scores for each sample and reference. `None` if the metric is computed corpus-level.
+    """
+    scores: torch.FloatTensor
+    scores_per_reference: Optional[torch.FloatTensor] = None
 
 
 class MetricRunner:
@@ -46,7 +61,7 @@ class MetricRunner:
                  input_ids: torch.LongTensor,
                  sample_ids: Tuple[torch.LongTensor],
                  reference_ids: Tuple[torch.LongTensor],
-                 ) -> torch.FloatTensor:
+                 ) -> MetricOutput:
         r"""
         Args:
             input_ids (`torch.LongTensor` of shape `(batch_size, sequence_length)`):
@@ -59,8 +74,7 @@ class MetricRunner:
                 the reference sequences.
 
         Returns:
-            `torch.FloatTensor` of shape `(batch_size, num_samples)`:
-                The metric scores for each sample (aggregated over all references).
+            `MetricOutput` containing the metric scores.
         """
 
         # Detokenize
@@ -83,8 +97,12 @@ class MetricRunner:
             raise ValueError("Number of references must match `mbr_config.num_references`")
 
         # Compute metric
-        metric_scores = self._compute_str_metric(str_samples, str_references, str_inputs)
-        return metric_scores
+        scores_per_reference = self._compute_str_metric(str_samples, str_references, str_inputs)
+
+        return MetricOutput(
+            scores=scores_per_reference.mean(dim=-1),
+            scores_per_reference=scores_per_reference,
+        )
 
     def _compute_str_metric(self,
                             samples: List[List[str]],
@@ -112,7 +130,6 @@ class MetricRunner:
                             **self.mbr_config.metric_kwargs,
                         )
                     metric_scores[i, j, k] = score
-        metric_scores = metric_scores.mean(dim=-1)  # average over references
         return metric_scores
 
     @functools.lru_cache(maxsize=(1024 ** 2))
