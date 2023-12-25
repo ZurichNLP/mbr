@@ -95,5 +95,4 @@ class CometMetricRunner(MetricRunner):
                 for k in range(self.mbr_config.num_references):
                     metric_scores[i, j, k] = input_triple_scores[(inputs[i], samples[j][i], references[k][i])]
 
-        metric_scores = metric_scores.mean(dim=-1)  # average over references
         return metric_scores

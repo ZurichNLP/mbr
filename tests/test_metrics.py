@@ -75,15 +75,19 @@ class MetricUtilsTestCase(TestCase):
         self.assertEqual(metric.scorer.encoder.__class__.__name__, "MiniLMEncoder")
 
     def test_compute_metric__chrf(self):
-        metric_scores = self.metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
-        self.assertTrue(torch.is_floating_point(metric_scores))
+        metric_output = self.metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
+        self.assertTrue(torch.is_floating_point(metric_output.scores))
+        self.assertTrue(torch.is_floating_point(metric_output.scores_per_reference))
+        torch.testing.assert_close(metric_output.scores_per_reference.mean(dim=-1), metric_output.scores)
+        self.assertEqual(metric_output.scores.shape, (2, 3))  # batch_size x num_samples
+        self.assertEqual(metric_output.scores_per_reference.shape, (2, 3, 2))  # batch_size x num_samples x num_references
         # Duplicate samples should have the same scores
-        self.assertEqual(metric_scores[0, 0], metric_scores[0, 1])
+        torch.testing.assert_close(metric_output.scores[0, 0], metric_output.scores[0, 1])
+        torch.testing.assert_close(metric_output.scores_per_reference[0, 0, 0], metric_output.scores_per_reference[0, 1, 0])
         # The metric scores should rank as expected, given the test strings in self.samples and self.references
-        self.assertEqual(metric_scores.shape, (2, 3))  # batch_size x num_samples
-        self.assertGreater(metric_scores[0, 0], metric_scores[0, 2])
-        self.assertLess(metric_scores[1, 0], metric_scores[1, 1])
-        self.assertLess(metric_scores[1, 0], metric_scores[1, 2])
+        self.assertGreater(metric_output.scores[0, 0], metric_output.scores[0, 2])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 1])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 2])
 
     @unittest.skipIf(os.getenv("SKIP_SLOW_TESTS", False), "Requires extra dependencies")
     def test_compute_metric__comet(self):
@@ -91,15 +95,19 @@ class MetricUtilsTestCase(TestCase):
         self.mbr_config.metric_output_field = "mean_score"
         self.metric_runner = MetricRunner(self.mbr_config, self.tokenizer)
         self.assertEqual(self.metric_runner.metric.name, "comet")
-        metric_scores = self.metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
-        self.assertTrue(torch.is_floating_point(metric_scores))
+        metric_output = self.metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
+        self.assertTrue(torch.is_floating_point(metric_output.scores))
+        self.assertTrue(torch.is_floating_point(metric_output.scores_per_reference))
+        torch.testing.assert_close(metric_output.scores_per_reference.mean(dim=-1), metric_output.scores)
+        self.assertEqual(metric_output.scores.shape, (2, 3))  # batch_size x num_samples
+        self.assertEqual(metric_output.scores_per_reference.shape, (2, 3, 2))  # batch_size x num_samples x num_references
         # Duplicate samples should have the same scores
-        self.assertEqual(metric_scores[0, 0], metric_scores[0, 1])
+        torch.testing.assert_close(metric_output.scores[0, 0], metric_output.scores[0, 1])
+        torch.testing.assert_close(metric_output.scores_per_reference[0, 0, 0], metric_output.scores_per_reference[0, 1, 0])
         # The metric scores should rank as expected, given the test strings in self.samples and self.references
-        self.assertEqual(metric_scores.shape, (2, 3))  # batch_size x num_samples
-        self.assertGreater(metric_scores[0, 0], metric_scores[0, 2])
-        self.assertLess(metric_scores[1, 0], metric_scores[1, 1])
-        self.assertLess(metric_scores[1, 0], metric_scores[1, 2])
+        self.assertGreater(metric_output.scores[0, 0], metric_output.scores[0, 2])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 1])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 2])
 
     @unittest.skipIf(os.getenv("SKIP_SLOW_TESTS", False), "Requires extra dependencies")
     def test_compute_metric__bleurt(self):
@@ -107,15 +115,19 @@ class MetricUtilsTestCase(TestCase):
         self.mbr_config.metric_output_field = "scores"
         self.metric_runner = MetricRunner(self.mbr_config, self.tokenizer)
         self.assertEqual(self.metric_runner.metric.name, "bleurt")
-        metric_scores = self.metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
-        self.assertTrue(torch.is_floating_point(metric_scores))
+        metric_output = self.metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
+        self.assertTrue(torch.is_floating_point(metric_output.scores))
+        self.assertTrue(torch.is_floating_point(metric_output.scores_per_reference))
+        torch.testing.assert_close(metric_output.scores_per_reference.mean(dim=-1), metric_output.scores)
+        self.assertEqual(metric_output.scores.shape, (2, 3))  # batch_size x num_samples
+        self.assertEqual(metric_output.scores_per_reference.shape, (2, 3, 2))  # batch_size x num_samples x num_references
         # Duplicate samples should have the same scores
-        self.assertEqual(metric_scores[0, 0], metric_scores[0, 1])
+        torch.testing.assert_close(metric_output.scores[0, 0], metric_output.scores[0, 1])
+        torch.testing.assert_close(metric_output.scores_per_reference[0, 0, 0], metric_output.scores_per_reference[0, 1, 0])
         # The metric scores should rank as expected, given the test strings in self.samples and self.references
-        self.assertEqual(metric_scores.shape, (2, 3))  # batch_size x num_samples
-        self.assertGreater(metric_scores[0, 0], metric_scores[0, 2])
-        self.assertLess(metric_scores[1, 0], metric_scores[1, 1])
-        self.assertLess(metric_scores[1, 0], metric_scores[1, 2])
+        self.assertGreater(metric_output.scores[0, 0], metric_output.scores[0, 2])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 1])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 2])
 
     @unittest.skipIf(os.getenv("SKIP_SLOW_TESTS", False), "Requires extra dependencies")
     def test_comet_metric_runner(self):
@@ -125,6 +137,7 @@ class MetricUtilsTestCase(TestCase):
         base_metric_runner = MetricRunner(self.mbr_config, self.tokenizer)
         self.assertEqual(base_metric_runner.metric.name, "comet")
         comet_metric_runner = CometMetricRunner(self.mbr_config, self.tokenizer)
+        # Output should be the same as the base MetricRunner
         base_metric_scores = base_metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
         metric_scores = comet_metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
         torch.testing.assert_close(base_metric_scores, metric_scores)
