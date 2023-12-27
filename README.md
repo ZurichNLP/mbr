@@ -204,3 +204,12 @@ The [experiments](experiments) directory contains the code for reproductions of 
 - https://github.com/ZurichNLP/understanding-mbr: MBR with Sockeye
 - https://github.com/ZurichNLP/mbr-sensitivity and https://github.com/Unbabel/COMET#minimum-bayes-risk-decoding: COMET metric for MBR
 - https://github.com/rainavyas/mbr_gec: MBR for Grammatical Error Correction
+
+## Changelog
+- v0.2.0
+  - **Breaking change:** Rename `MBRGenerationConfig` to `MBRConfig`
+  - **Breaking change:** `MetricRunner` now returns a `MetricOutput` dict instead of the raw tensor of scores.
+  - Make the size of the metric cache configurable via `MBRConfig.metric_cache_size`
+  - Allow that the number of references can be larger than the number of samples (if generated separately from the samples).
+  - Remove `GenerationConfig` as parent class of `MBRConfig` 
+
