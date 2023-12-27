@@ -102,7 +102,6 @@ class DecoderOnlyTestCase(TestCase):
             torch.testing.assert_close(output.sequences[0], sample.sequences[0][:output.sequences[0].shape[0]])
         else:
             torch.testing.assert_close(output.sequences[0][:sample.sequences[0].shape[0]], sample.sequences[0])
-        torch.testing.assert_close(output.sequences[0], sample.sequences[0])
         self.assertIsNotNone(sample.scores)
         self.assertEqual(1, len(sample.scores[0]))
         self.assertIsNotNone(sample.attentions)
