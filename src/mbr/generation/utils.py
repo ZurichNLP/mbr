@@ -443,6 +443,11 @@ class MBRGenerationMixin(GenerationMixin):
             # 14. references
             if references_config is None:
                 # Use samples as references
+                if mbr_config.num_references > mbr_config.num_samples:
+                    raise ValueError(
+                        f"`mbr_config.num_references` ({mbr_config.num_references}) must be smaller than or equal to "
+                        f"`mbr_config.num_samples` ({mbr_config.num_samples}) if samples are re-used as references."
+                    )
                 references = samples[:mbr_config.num_references]
             else:
                 # Generate references
