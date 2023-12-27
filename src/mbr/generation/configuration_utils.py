@@ -24,7 +24,7 @@ class MBRGenerationConfig(GenerationConfig):
         num_samples (`int`, *optional*, defaults to 10):
             Number of samples generated. 1 means no MBR decoding.
         num_references (`int`, *optional*, defaults to `num_samples`):
-            Number of pseudo-references used for MBR decoding. Needs to be smaller or equal to `num_samples`.
+            Number of pseudo-references used for MBR decoding.
         metric (`str` or `~evaluate.Metric`, *optional*, defaults to 'chrf'):
             Metric used for MBR decoding.
         metric_config_name (`str`, *optional*, defaults to None):
@@ -99,12 +99,6 @@ class MBRGenerationConfig(GenerationConfig):
 
         # Validate the values of the attributes
         self.validate(is_init=True)
-
-    def validate(self, is_init=False):
-        if self.num_references > self.num_samples:
-            raise ValueError(
-                f"`num_references` ({self.num_references}) must be <= `num_samples` ({self.num_samples})."
-            )
 
     def save_pretrained(
             self,
