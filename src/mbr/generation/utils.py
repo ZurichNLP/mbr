@@ -14,7 +14,7 @@ from transformers.generation.utils import GenerationMode
 from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from transformers.utils import logging, ModelOutput
 
-from mbr.generation.configuration_utils import MBRGenerationConfig
+from mbr.generation.configuration_utils import MBRConfig
 from mbr.metrics.base import MetricRunner, MetricOutput
 
 if TYPE_CHECKING:
@@ -62,7 +62,7 @@ class MBRGenerationMixin(GenerationMixin):
             inputs: Optional[torch.Tensor] = None,
             generation_config: Optional[GenerationConfig] = None,
             references_config: Optional[GenerationConfig] = None,
-            mbr_config: Optional[MBRGenerationConfig] = None,
+            mbr_config: Optional[MBRConfig] = None,
             tokenizer: Optional["PreTrainedTokenizer"] = None,
             metric_runner: Optional[MetricRunner] = None,
             logits_processor: Optional[LogitsProcessorList] = None,
@@ -107,11 +107,10 @@ class MBRGenerationMixin(GenerationMixin):
             references_config (`GenerationConfig`, *optional*):
                 The generation configuration to be used for the generation of pseudo-references.
                 If `None`, `generation_config` will be used.
-            mbr_config (`~mbr.generation.MBRGenerationConfig`, *optional*):
-                The generation configuration to be used as base parametrization for MBR decoding. If `None`, the
-                default will be used, which had the following loading priority: 1) from the `mbr_config.json` model
-                file, if it exists; 2) from the model configuration. Please note that unspecified parameters will
-                inherit [`~mbr.generation.MBRGenerationConfig`]'s default values.
+            mbr_config (`~mbr.generation.MBRConfig`, *optional*):
+                The generation configuration to be used as base parametrization for MBR decoding. If `None`, a default
+                configuration is used. Please note that unspecified parameters will inherit
+                [`~mbr.generation.MBRConfig`]'s default values.
             tokenizer (`PreTrainedTokenizer`, *optional*):
                 A tokenizer that can be used to convert the generated token ids to strings, which is usually
                 required for computing the metric.
@@ -182,8 +181,8 @@ class MBRGenerationMixin(GenerationMixin):
             raise ValueError(
                 f"`references_config` has to be of type `GenerationConfig`, but is {type(references_config)}"
             )
-        if mbr_config is not None and not isinstance(mbr_config, MBRGenerationConfig):
-            raise ValueError(f"`mbr_config` has to be of type `MBRGenerationConfig`, but is {type(mbr_config)}")
+        if mbr_config is not None and not isinstance(mbr_config, MBRConfig):
+            raise ValueError(f"`mbr_config` has to be of type `MBRConfig`, but is {type(mbr_config)}")
         if mbr_config is None:
             raise ValueError("`mbr_config` must be passed to `generate()`.")
         if tokenizer is None and metric_runner is None:

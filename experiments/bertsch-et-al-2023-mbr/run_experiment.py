@@ -8,7 +8,7 @@ from datasets import load_dataset
 from tqdm import tqdm
 from transformers import BartForConditionalGeneration, AutoTokenizer, pipeline, GenerationConfig
 
-from mbr import MBR, MBRGenerationConfig
+from mbr import MBR, MBRConfig
 
 results_file = jsonlines.open(Path(__file__).parent / f"results.jsonl", "w")
 
@@ -26,7 +26,7 @@ evaluation_metric_rouge = evaluate.load("rouge")
 dataset = load_dataset("cnn_dailymail", "3.0.0", split="test")
 
 # MBR
-mbr_config = MBRGenerationConfig()
+mbr_config = MBRConfig()
 mbr_config.num_samples = 30
 mbr_config.num_references = 30
 mbr_config.metric = "rouge"

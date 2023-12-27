@@ -6,14 +6,14 @@ import evaluate
 import torch
 from transformers import AutoTokenizer
 
-from mbr import MetricRunner, MBRGenerationConfig
+from mbr import MetricRunner, MBRConfig
 from mbr.metrics import metric_is_source_based
 
 
 class MetricUtilsTestCase(TestCase):
 
     def setUp(self):
-        self.mbr_config = MBRGenerationConfig(
+        self.mbr_config = MBRConfig(
             metric="chrf",
             metric_output_field="score",
             num_samples=3,
