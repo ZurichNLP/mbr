@@ -15,7 +15,7 @@ from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from transformers.utils import logging, ModelOutput
 
 from mbr.generation.configuration_utils import MBRGenerationConfig
-from mbr.metrics.base import MetricRunner
+from mbr.metrics.base import MetricRunner, MetricOutput
 
 if TYPE_CHECKING:
     from transformers import PreTrainedModel, PreTrainedTokenizer
@@ -42,16 +42,16 @@ class MBROutput(ModelOutput):
             The indices (in `all_samples`) of the selected sequences for each batch item.
         references (`tuple(ModelOutput)`), *optional*, returned when `output_all_samples=True` is passed or when
         `config.output_all_samples=True`):
-        metric_scores (`torch.FloatTensor` of shape `(batch_size, num_samples)`), *optional*, returned when
-        `output_metric_scores=True` is passed or when `config.output_metric_scores=True`):
-            The metric score for each sample.
+        metric_scores (`MetricOutput`), *optional*, returned when `output_metric_scores=True` is passed or when
+        `config.output_metric_scores=True`):
+            The output of the metric.
     """
 
     sequences: torch.LongTensor = None
     all_samples: Optional[Tuple[ModelOutput]] = None
     selected_samples_indices: Optional[torch.LongTensor] = None
     references: Optional[Tuple[ModelOutput]] = None
-    metric_scores: Optional[torch.FloatTensor] = None
+    metric_scores: Optional[MetricOutput] = None
 
 
 class MBRGenerationMixin(GenerationMixin):
@@ -483,11 +483,11 @@ class MBRGenerationMixin(GenerationMixin):
         else:
             reference_ids = references
 
-        metric_scores = metric_runner(input_ids, sample_ids, reference_ids)
+        metric_output = metric_runner(input_ids, sample_ids, reference_ids)
         if not mbr_config.lower_is_better:
-            top_metric_scores, top_metric_indices = metric_scores.max(dim=-1)
+            top_metric_scores, top_metric_indices = metric_output.scores.max(dim=-1)
         else:
-            top_metric_scores, top_metric_indices = metric_scores.min(dim=-1)
+            top_metric_scores, top_metric_indices = metric_output.scores.min(dim=-1)
 
         # Copy top samples into a tensor of shape (batch_size, max_length)
         max_length = max(sample.shape[1] for sample in sample_ids)
@@ -496,7 +496,7 @@ class MBRGenerationMixin(GenerationMixin):
             all_samples=(tuple(samples) if mbr_config.output_all_samples else None),
             selected_samples_indices=(top_metric_indices if mbr_config.output_all_samples else None),
             references=(tuple(references) if mbr_config.output_all_samples else None),
-            metric_scores=(metric_scores if mbr_config.output_metric_scores else None),
+            metric_scores=(metric_output if mbr_config.output_metric_scores else None),
         )
         for batch_idx, sample_idx in enumerate(top_metric_indices):
             output.sequences[batch_idx][:sample_ids[sample_idx].shape[1]] = sample_ids[sample_idx][batch_idx]

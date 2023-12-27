@@ -6,7 +6,7 @@ import torch
 from transformers import AutoTokenizer, GPT2LMHeadModel, M2M100ForConditionalGeneration, GenerationConfig
 from transformers.generation import SampleDecoderOnlyOutput, SampleEncoderDecoderOutput
 
-from mbr import MBR, MBRGenerationConfig, MBROutput, MetricRunner
+from mbr import MBR, MBRGenerationConfig, MBROutput, MetricRunner, MetricOutput
 
 
 class DecoderOnlyTestCase(TestCase):
@@ -90,9 +90,11 @@ class DecoderOnlyTestCase(TestCase):
         self.assertEqual(5, len(output.references))
         self.assertIsInstance(output.references[0], SampleDecoderOnlyOutput)
         self.assertIsNotNone(output.metric_scores)
-        self.assertTrue(torch.is_floating_point(output.metric_scores))
-        self.assertEqual(1, output.metric_scores.shape[0])
-        self.assertEqual(5, output.metric_scores.shape[1])
+        self.assertIsInstance(output.metric_scores, MetricOutput)
+        self.assertTrue(torch.is_floating_point(output.metric_scores.scores))
+        self.assertTrue(torch.is_floating_point(output.metric_scores.scores_per_reference))
+        self.assertEqual([1, 5], list(output.metric_scores.scores.shape))
+        self.assertEqual([1, 5, 5], list(output.metric_scores.scores_per_reference.shape))
 
         # Test the model output for a selected sample
         sample = output.all_samples[output.selected_samples_indices[0]]
@@ -267,9 +269,11 @@ class EncoderDecoderTestCase(TestCase):
         self.assertEqual(5, len(output.references))
         self.assertIsInstance(output.references[0], SampleEncoderDecoderOutput)
         self.assertIsNotNone(output.metric_scores)
-        self.assertTrue(torch.is_floating_point(output.metric_scores))
-        self.assertEqual(2, output.metric_scores.shape[0])
-        self.assertEqual(5, output.metric_scores.shape[1])
+        self.assertIsInstance(output.metric_scores, MetricOutput)
+        self.assertTrue(torch.is_floating_point(output.metric_scores.scores))
+        self.assertTrue(torch.is_floating_point(output.metric_scores.scores_per_reference))
+        self.assertEqual([2, 5], list(output.metric_scores.scores.shape))
+        self.assertEqual([2, 5, 5], list(output.metric_scores.scores_per_reference.shape))
 
         # Test the model output for a selected sample (batch index 0)
         sample = output.all_samples[output.selected_samples_indices[0]]
