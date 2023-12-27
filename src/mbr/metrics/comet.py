@@ -1,7 +1,8 @@
 import itertools
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Set
 
 import torch
+from cachetools import FIFOCache
 from comet.models import RegressionMetric
 from tqdm import tqdm
 
@@ -42,6 +43,9 @@ class CometMetricRunner(MetricRunner):
         self.batch_size_embed = batch_size_embed
         self.batch_size_estimate = batch_size_estimate
         self.progress_bar = progress_bar
+        # We use a key-value cache, which is needed if the metric is called multiple times with similar inputs
+        # (e.g. for MBR with iterative pruning).
+        self.cache = FIFOCache(maxsize=self.mbr_config.metric_cache_size)
 
     def _compute_str_metric(self,
                             samples: List[List[str]],
@@ -70,14 +74,20 @@ class CometMetricRunner(MetricRunner):
                     all_embeddings[all_sequences[j]] = embeddings[j - start_idx]
 
             # Collect all input triples in a list
-            input_triples: List[Tuple[str, str, str]] = []
+            input_triples: Set[Tuple[str, str, str]] = set()
             for j in range(self.mbr_config.num_samples):
                 for k in range(self.mbr_config.num_references):
-                    input_triples.append((inputs[i], samples[j][i], references[k][i]))
-            input_triples = list(set(input_triples))  # deduplicate
-
-            # Compute scores for all input triples
+                    input_triples.add((inputs[i], samples[j][i], references[k][i]))
             input_triple_scores = {}
+
+            # Check if any of the triples are in the cache
+            for triple in list(input_triples):
+                if triple in self.cache:
+                    input_triple_scores[triple] = self.cache[triple]
+                    input_triples.remove(triple)
+
+            # Compute scores for remaining input triples
+            input_triples: List = list(input_triples)
             batches = itertools.zip_longest(range(0, len(input_triples), self.batch_size_estimate),
                                             range(self.batch_size_estimate, len(input_triples),
                                                   self.batch_size_estimate))
@@ -89,7 +99,10 @@ class CometMetricRunner(MetricRunner):
                     ref_sentemb=torch.stack([all_embeddings[triple[2]] for triple in batch]),
                 )
                 for j in range(start_idx, end_idx if end_idx is not None else len(input_triples)):
-                    input_triple_scores[batch[j - start_idx]] = batch_scores.score[j - start_idx]
+                    triple = batch[j - start_idx]
+                    score = batch_scores.score[j - start_idx]
+                    input_triple_scores[triple] = score
+                    self.cache[triple] = score
 
             for j in range(self.mbr_config.num_samples):
                 for k in range(self.mbr_config.num_references):

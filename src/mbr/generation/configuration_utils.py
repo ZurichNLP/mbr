@@ -40,6 +40,8 @@ class MBRConfig:
             Field of the metric output that is used
         metric_kwargs (optional):
             Additional arguments for the metric's `compute` method. The default MetricRunner requires it to be hashable.
+        metric_cache_size (`int`, *optional*, defaults to `num_samples` * `num_references`):
+            Size of the cache for the metric. Set to `None` to disable caching (not recommended).
         lower_is_better (`bool`, *optional*, defaults to `False`):
             Set to true if lower metric scores are better (e.g., perplexity).
 
@@ -73,6 +75,7 @@ class MBRConfig:
         self.metric_config_name = kwargs.pop("metric_config_name", None)
         self.metric_output_field = kwargs.pop("metric_output_field", "score")
         self.metric_kwargs = kwargs.pop("metric_kwargs", {})
+        self.metric_cache_size = kwargs.pop("metric_cache_size", self.num_samples * self.num_references)
         self.lower_is_better = kwargs.pop("lower_is_better", False)
 
         # Parameters that define the output variables of `generate`
