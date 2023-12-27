@@ -6,10 +6,10 @@ import sacrebleu
 import torch
 from datasets import load_dataset
 from tqdm import tqdm
-from transformers import MarianMTModel, AutoTokenizer, pipeline, GenerationConfig, set_seed
+from transformers import MarianMTModel, AutoTokenizer, pipeline, set_seed
 from transformers.pipelines.base import KeyDataset
 
-from mbr import MBR, MBRGenerationConfig
+from mbr import MBR, MBRConfig
 
 set_seed(42)
 
@@ -52,7 +52,7 @@ dataset = load_dataset("Helsinki-NLP/tatoeba_mt", language_pair=language_pair)
 references = dataset["test"]["targetString"]
 
 # MBR
-mbr_config = MBRGenerationConfig()
+mbr_config = MBRConfig()
 mbr_config.metric = "chrf"
 mbr_config.metric_output_field = "score"
 batch_size = 64 if "-big-" in model_name else 256

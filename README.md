@@ -50,12 +50,12 @@ model = MBR(LlamaForCausalLM).from_pretrained(...)
 
 ### 2. Configure MBR decoding
 
-Create an `MBRGenerationConfig` object to pass to the model's `generate` method:
+Create an `MBRConfig` object to pass to the model's `generate` method:
 
 ```python
-from mbr import MBRGenerationConfig
+from mbr import MBRConfig
 
-mbr_config = MBRGenerationConfig(
+mbr_config = MBRConfig(
     num_samples=10,
     metric="chrf",
 )

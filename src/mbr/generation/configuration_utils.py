@@ -1,24 +1,30 @@
-import os
-from typing import Union, Optional
-
-from transformers import GenerationConfig
-
 from transformers import __version__ as transformers_version
 from transformers.utils import logging
-
-from mbr.generation import MBR_GENERATION_CONFIG_NAME
 
 logger = logging.get_logger(__name__)
 
 
-class MBRGenerationConfig(GenerationConfig):
+class MBRConfig:
     r"""
-    Class that holds a configuration for a generation task. A `generate` call supports the following generation method
-    for text-decoder, text-to-text, speech-to-text, and vision-to-text models:
+    Class that holds a configuration for minimum Bayes risk decoding (MBR). Pass this config when calling
+    `MBRGenerationMixin.generate()`:
 
-        - *minimum Bayes risk decoding* by calling [`~generation.MBRGenerationMixin.mbr_decoding`]
+        Example:
 
-    You do not need to call the above method directly; call '.generate()' instead.
+        ```python
+        >>> config = MBRConfig(num_samples=10, num_references=10, metric="chrf")
+        >>> model.generate(..., mbr_config=config)
+        ```
+
+    The class is inspired by `transformers.GenerationConfig`.
+    Note that `MBRConfig` does not control the sampling strategy. Pass separate `GenerationConfig` objects to control
+    sampling:
+
+        ```python
+        >>> generation_config = GenerationConfig(do_sample=True, num_beams=1, top_p=0.9)
+        >>> references_config = GenerationConfig(do_sample=True, num_beams=1, epsilon_cutoff=0.02)
+        >>> model.generate(..., mbr_config=config, generation_config=generation_config, references_config=references_config)
+        ```
 
     Arg:
         num_samples (`int`, *optional*, defaults to 10):
@@ -88,7 +94,7 @@ class MBRGenerationConfig(GenerationConfig):
 
         # Additional attributes without default values
         if not self._from_model_config:
-            # we don't want to copy values from the model config if we're initializing an `MBRGenerationConfig` from a
+            # we don't want to copy values from the model config if we're initializing an `MBRConfig` from a
             # model's default configuration file
             for key, value in kwargs.items():
                 try:
@@ -100,20 +106,12 @@ class MBRGenerationConfig(GenerationConfig):
         # Validate the values of the attributes
         self.validate(is_init=True)
 
-    def save_pretrained(
-            self,
-            save_directory: Union[str, os.PathLike],
-            config_file_name: Optional[Union[str, os.PathLike]] = MBR_GENERATION_CONFIG_NAME,
-            **kwargs,
-    ):
-        super().save_pretrained(save_directory, config_file_name=config_file_name, **kwargs)
+    def validate(self, is_init=False):
+        """
+        Validates the values of the attributes of the [`GenerationConfig`] instance. Raises exceptions in the presence
+        of parameterization that can be detected as incorrect from the configuration instance alone.
 
-    @classmethod
-    def from_pretrained(
-            cls,
-            pretrained_model_name: Union[str, os.PathLike],
-            config_file_name: Optional[Union[str, os.PathLike]] = MBR_GENERATION_CONFIG_NAME,
-            **kwargs,
-    ) -> "MBRGenerationConfig":
-        generation_config = super().from_pretrained(pretrained_model_name, config_file_name=config_file_name, **kwargs)
-        return cls.from_dict(generation_config.to_dict())
+        Note that some parameters are best validated at generate runtime, as they may depend on other inputs and/or the
+        model, such as parameters related to the generation length.
+        """
+        pass

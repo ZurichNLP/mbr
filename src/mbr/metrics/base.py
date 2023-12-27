@@ -9,7 +9,7 @@ from evaluate import EvaluationModule
 from transformers import PreTrainedTokenizerBase
 from transformers.utils import ModelOutput
 
-from mbr import MBRGenerationConfig
+from mbr import MBRConfig
 
 MetricType = Union[Metric, EvaluationModule]
 
@@ -35,7 +35,7 @@ class MetricRunner:
     features.
     """
 
-    def __init__(self, mbr_config: MBRGenerationConfig, tokenizer: PreTrainedTokenizerBase):
+    def __init__(self, mbr_config: MBRConfig, tokenizer: PreTrainedTokenizerBase):
         self.mbr_config = mbr_config
         # Ensure that mbr_config.metric_kwargs is hashable (because _compute_metric() uses lru_cache)
         if mbr_config.metric_kwargs:

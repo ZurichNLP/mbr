@@ -6,7 +6,7 @@ import torch
 from transformers import AutoTokenizer, GPT2LMHeadModel, M2M100ForConditionalGeneration, GenerationConfig
 from transformers.generation import SampleDecoderOnlyOutput, SampleEncoderDecoderOutput
 
-from mbr import MBR, MBRGenerationConfig, MBROutput, MetricRunner, MetricOutput
+from mbr import MBR, MBRConfig, MBROutput, MetricRunner, MetricOutput
 
 
 class DecoderOnlyTestCase(TestCase):
@@ -16,7 +16,7 @@ class DecoderOnlyTestCase(TestCase):
         self.tokenizer = AutoTokenizer.from_pretrained("distilgpt2")
 
     def test_generate(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
         )
         input_sentences = [
@@ -35,7 +35,7 @@ class DecoderOnlyTestCase(TestCase):
         self.assertTrue(output[0].startswith("Hello, my name is"))
 
     def test_model_output(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
             return_dict_in_generate=True,
         )
@@ -59,7 +59,7 @@ class DecoderOnlyTestCase(TestCase):
         self.assertIsNone(output.metric_scores)
 
     def test_model_output_extended(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
             return_dict_in_generate=True,
             output_scores=True,
@@ -111,7 +111,7 @@ class DecoderOnlyTestCase(TestCase):
         self.assertEqual(1, len(sample.hidden_states[0][0]))
 
     def test_metric_runner(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
         )
         input_sentences = [
@@ -130,7 +130,7 @@ class DecoderOnlyTestCase(TestCase):
         self.assertTrue(output[0].startswith("Hello, my name is"))
 
     def test_generation_config(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
         )
         generation_config = GenerationConfig.from_pretrained("distilgpt2",
@@ -154,7 +154,7 @@ class DecoderOnlyTestCase(TestCase):
         self.assertTrue(output[0].startswith("Hello, my name is"))
 
     def test_references_config(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
         )
         generation_config = GenerationConfig.from_pretrained("distilgpt2",
@@ -193,7 +193,7 @@ class EncoderDecoderTestCase(TestCase):
         self.tokenizer.tgt_lang = "fr"
 
     def test_generate(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
         )
         input_sentences = [
@@ -212,7 +212,7 @@ class EncoderDecoderTestCase(TestCase):
         self.assertEqual(2, len(translations))
 
     def test_model_output(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
             return_dict_in_generate=True,
         )
@@ -236,7 +236,7 @@ class EncoderDecoderTestCase(TestCase):
         self.assertIsNone(output.metric_scores)
 
     def test_model_output_extended(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
             return_dict_in_generate=True,
             output_scores=True,

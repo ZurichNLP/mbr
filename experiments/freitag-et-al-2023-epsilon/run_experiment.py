@@ -10,7 +10,7 @@ from datasets import load_dataset
 from tqdm import tqdm
 from transformers import FSMTForConditionalGeneration, AutoTokenizer, pipeline, set_seed, GenerationConfig
 
-from mbr import MBR, MBRGenerationConfig
+from mbr import MBR, MBRConfig
 from mbr.metrics.comet import CometMetricRunner
 
 set_seed(42)
@@ -51,7 +51,7 @@ references = Path(ref_path).read_text().splitlines()
 assert len(dataset["test"]) == len(references)
 
 # MBR
-mbr_config = MBRGenerationConfig()
+mbr_config = MBRConfig()
 mbr_config.num_samples = 1024
 mbr_config.metric = "comet"
 mbr_config.metric_config_name = "eamt22-cometinho-da"

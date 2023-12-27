@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from transformers import AutoTokenizer, pipeline, GPT2LMHeadModel, M2M100ForConditionalGeneration
 
-from mbr import MBRGenerationConfig
+from mbr import MBRConfig
 from mbr import MBR
 
 
@@ -16,7 +16,7 @@ class TextGenerationTestCase(TestCase):
         self.pipeline = pipeline("text-generation", model=self.model, tokenizer=self.tokenizer)
 
     def test_pipeline(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
         )
         output = self.pipeline(
@@ -38,7 +38,7 @@ class TranslationTestCase(TestCase):
         self.tokenizer.tgt_lang = "fr"
 
     def test_pipeline(self):
-        mbr_config = MBRGenerationConfig(
+        mbr_config = MBRConfig(
             num_samples=5,
         )
         output = self.pipeline(
