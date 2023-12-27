@@ -4,4 +4,4 @@ from mbr.metrics.base import MetricOutput, MetricRunner
 from mbr.modeling import MBR
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
