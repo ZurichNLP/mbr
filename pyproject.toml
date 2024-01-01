@@ -20,6 +20,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.optional-dependencies]
+fastchrf = ["fastchrf"]
+
 [project.urls]
 "Homepage" = "https://github.com/ZurichNLP/mbr"
 "Bug Tracker" = "https://github.com/ZurichNLP/mbr/issues"

@@ -141,3 +141,35 @@ class MetricUtilsTestCase(TestCase):
         base_metric_scores = base_metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
         metric_scores = comet_metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
         torch.testing.assert_close(base_metric_scores, metric_scores)
+
+    @unittest.skipIf(os.getenv("SKIP_SLOW_TESTS", False), "Requires extra dependencies")
+    def test_fastchrf_metric_runner__aggregate(self):
+        from mbr.metrics.fastchrf import FastChrfMetricRunner
+        metric_runner = FastChrfMetricRunner(self.mbr_config, self.tokenizer, compute_pairwise_average=False)
+        metric_output = metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
+        self.assertTrue(torch.is_floating_point(metric_output.scores))
+        self.assertIsNone(metric_output.scores_per_reference)
+        self.assertEqual(metric_output.scores.shape, (2, 3))  # batch_size x num_samples
+        # Duplicate samples should have the same scores
+        torch.testing.assert_close(metric_output.scores[0, 0], metric_output.scores[0, 1])
+        # The metric scores should rank as expected, given the test strings in self.samples and self.references
+        self.assertGreater(metric_output.scores[0, 0], metric_output.scores[0, 2])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 1])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 2])
+
+    @unittest.skipIf(os.getenv("SKIP_SLOW_TESTS", False), "Requires extra dependencies")
+    def test_fastchrf_metric_runner__pairwise(self):
+        from mbr.metrics.fastchrf import FastChrfMetricRunner
+        metric_runner = FastChrfMetricRunner(self.mbr_config, self.tokenizer, compute_pairwise_average=True)
+        metric_output = metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
+        self.assertTrue(torch.is_floating_point(metric_output.scores))
+        self.assertTrue(torch.is_floating_point(metric_output.scores_per_reference))
+        self.assertEqual(metric_output.scores.shape, (2, 3))  # batch_size x num_samples
+        self.assertEqual(metric_output.scores_per_reference.shape, (2, 3, 2))  # batch_size x num_samples x num_references
+        # Duplicate samples should have the same scores
+        torch.testing.assert_close(metric_output.scores[0, 0], metric_output.scores[0, 1])
+        torch.testing.assert_close(metric_output.scores_per_reference[0, 0, 0], metric_output.scores_per_reference[0, 1, 0])
+        # The metric scores should rank as expected, given the test strings in self.samples and self.references
+        self.assertGreater(metric_output.scores[0, 0], metric_output.scores[0, 2])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 1])
+        self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 2])
