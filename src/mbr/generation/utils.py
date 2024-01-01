@@ -15,6 +15,7 @@ from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from transformers.utils import logging, ModelOutput
 
 from mbr.generation.configuration_utils import MBRConfig
+from mbr.metrics import load_metric_runner
 from mbr.metrics.base import MetricRunner, MetricOutput
 
 if TYPE_CHECKING:
@@ -476,7 +477,7 @@ class MBRGenerationMixin(GenerationMixin):
 
         # 15. apply metric to samples
         if metric_runner is None:
-            metric_runner = MetricRunner(mbr_config, tokenizer)
+            metric_runner = load_metric_runner(mbr_config, tokenizer)
 
         if isinstance(samples[0], ModelOutput):
             sample_ids = tuple(sample.sequences for sample in samples)
