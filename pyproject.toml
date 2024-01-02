@@ -10,18 +10,15 @@ requires-python = ">=3.9"
 dependencies = [
     "transformers",
     "evaluate",
-    "sacrebleu",
     "cachetools",
     "tqdm",
+    "fastchrf",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-
-[project.optional-dependencies]
-fastchrf = ["fastchrf"]
 
 [project.urls]
 "Homepage" = "https://github.com/ZurichNLP/mbr"

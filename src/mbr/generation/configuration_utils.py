@@ -12,7 +12,7 @@ class MBRConfig:
         Example:
 
         ```python
-        >>> config = MBRConfig(num_samples=10, num_references=10, metric="chrf")
+        >>> config = MBRConfig(num_samples=10, num_references=10, metric="fastchrf")
         >>> model.generate(..., mbr_config=config)
         ```
 
@@ -31,7 +31,7 @@ class MBRConfig:
             Number of samples generated. 1 means no MBR decoding.
         num_references (`int`, *optional*, defaults to `num_samples`):
             Number of pseudo-references used for MBR decoding.
-        metric (`str` or `~evaluate.Metric`, *optional*, defaults to 'chrf'):
+        metric (`str` or `~evaluate.Metric`, *optional*, defaults to 'fastchrf'):
             Metric used for MBR decoding.
         metric_config_name (`str`, *optional*, defaults to None):
             Metric configuration to pass to `evaluate.load` (e.g., the model for a trained metric, such as
@@ -71,7 +71,7 @@ class MBRConfig:
         # Parameters that control the generation strategy used
         self.num_samples = kwargs.pop("num_samples", 10)
         self.num_references = kwargs.pop("num_references", self.num_samples)
-        self.metric = kwargs.pop("metric", "chrf")
+        self.metric = kwargs.pop("metric", "fastchrf")
         self.metric_config_name = kwargs.pop("metric_config_name", None)
         self.metric_output_field = kwargs.pop("metric_output_field", "score")
         self.metric_kwargs = kwargs.pop("metric_kwargs", {})

@@ -142,7 +142,6 @@ class MetricUtilsTestCase(TestCase):
         metric_scores = comet_metric_runner(self.input_ids, self.sample_ids, self.reference_ids)
         torch.testing.assert_close(base_metric_scores, metric_scores)
 
-    @unittest.skipIf(os.getenv("SKIP_SLOW_TESTS", False), "Requires extra dependencies")
     def test_fastchrf_metric_runner__aggregate(self):
         from mbr.metrics.fastchrf import FastChrfMetricRunner
         metric_runner = FastChrfMetricRunner(self.mbr_config, self.tokenizer, compute_pairwise_average=False)
@@ -157,7 +156,6 @@ class MetricUtilsTestCase(TestCase):
         self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 1])
         self.assertLess(metric_output.scores[1, 0], metric_output.scores[1, 2])
 
-    @unittest.skipIf(os.getenv("SKIP_SLOW_TESTS", False), "Requires extra dependencies")
     def test_fastchrf_metric_runner__pairwise(self):
         from mbr.metrics.fastchrf import FastChrfMetricRunner
         metric_runner = FastChrfMetricRunner(self.mbr_config, self.tokenizer, compute_pairwise_average=True)

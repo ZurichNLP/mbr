@@ -69,40 +69,43 @@ class FastChrfMetricRunner(MetricRunner):
         if len(str_references) != self.mbr_config.num_references:
             raise ValueError("Number of references must match `mbr_config.num_references`")
 
-        # Compute metric
-        scores, scores_per_reference = self._compute_str_metric(
-            samples=[list(x) for x in zip(*str_samples)],  # [batch_size, num_samples]
-            references=[list(x) for x in zip(*str_references)],  # [batch_size, num_references]
+        # Transpose to batch_size x num_samples/num_references
+        str_samples = list(zip(*str_samples))
+        str_references = list(zip(*str_references))
+
+        if self.compute_pairwise_average:
+            output = self._compute_pairwise_chrf(str_samples, str_references)
+        else:
+            output = self._compute_aggregate_chrf(str_samples, str_references)
+        return output
+
+    def _compute_pairwise_chrf(self, samples: List[List[str]], references: List[List[str]]) -> MetricOutput:
+        scores_per_reference = pairwise_chrf(
+            samples,
+            references,
+            char_order=self.char_order,
+            beta=self.beta,
+            remove_whitespace=self.remove_whitespace,
+            eps_smoothing=self.eps_smoothing,
         )
+        scores_per_reference = torch.tensor(scores_per_reference)
+        scores = scores_per_reference.mean(dim=-1)
         return MetricOutput(
             scores=scores,
             scores_per_reference=scores_per_reference,
         )
 
-    def _compute_str_metric(self,
-                            samples: List[List[str]],
-                            references: List[List[str]],
-                            ) -> Tuple[torch.FloatTensor, torch.FloatTensor]:
-        if self.compute_pairwise_average:
-            scores_per_reference = pairwise_chrf(
-                samples,
-                references,
-                char_order=self.char_order,
-                beta=self.beta,
-                remove_whitespace=self.remove_whitespace,
-                eps_smoothing=self.eps_smoothing,
-            )
-            scores_per_reference = torch.tensor(scores_per_reference)
-            scores = scores_per_reference.mean(dim=-1)
-        else:
-            scores_per_reference = None
-            scores = aggregate_chrf(
-                samples,
-                references,
-                char_order=self.char_order,
-                beta=self.beta,
-                remove_whitespace=self.remove_whitespace,
-                eps_smoothing=self.eps_smoothing,
-            )
-            scores = torch.tensor(scores)
-        return scores, scores_per_reference
+    def _compute_aggregate_chrf(self, samples: List[List[str]], references: List[List[str]]) -> MetricOutput:
+        scores = aggregate_chrf(
+            samples,
+            references,
+            char_order=self.char_order,
+            beta=self.beta,
+            remove_whitespace=self.remove_whitespace,
+            eps_smoothing=self.eps_smoothing,
+        )
+        scores = torch.tensor(scores)
+        return MetricOutput(
+            scores=scores,
+            scores_per_reference=None,
+        )
