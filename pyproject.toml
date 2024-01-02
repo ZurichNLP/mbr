@@ -10,9 +10,9 @@ requires-python = ">=3.9"
 dependencies = [
     "transformers",
     "evaluate",
-    "sacrebleu",
     "cachetools",
     "tqdm",
+    "fastchrf",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

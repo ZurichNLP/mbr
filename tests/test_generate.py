@@ -6,7 +6,8 @@ import torch
 from transformers import AutoTokenizer, GPT2LMHeadModel, M2M100ForConditionalGeneration, GenerationConfig
 from transformers.generation import SampleDecoderOnlyOutput, SampleEncoderDecoderOutput
 
-from mbr import MBR, MBRConfig, MBROutput, MetricRunner, MetricOutput
+from mbr import MBR, MBRConfig, MBROutput, MetricOutput
+from mbr.metrics import load_metric_runner
 
 
 class DecoderOnlyTestCase(TestCase):
@@ -60,6 +61,7 @@ class DecoderOnlyTestCase(TestCase):
 
     def test_model_output_extended(self):
         mbr_config = MBRConfig(
+            metric="pairwise_chrf",
             num_samples=5,
             return_dict_in_generate=True,
             output_scores=True,
@@ -117,7 +119,7 @@ class DecoderOnlyTestCase(TestCase):
             "Hello, my name is",
         ]
         encoding = self.tokenizer(input_sentences, return_tensors="pt")
-        metric_runner = MetricRunner(mbr_config, self.tokenizer)
+        metric_runner = load_metric_runner(mbr_config, self.tokenizer)
         output = self.model.generate(
             **encoding,
             mbr_config=mbr_config,
@@ -236,6 +238,7 @@ class EncoderDecoderTestCase(TestCase):
 
     def test_model_output_extended(self):
         mbr_config = MBRConfig(
+            metric="pairwise_chrf",
             num_samples=5,
             return_dict_in_generate=True,
             output_scores=True,

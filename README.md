@@ -126,24 +126,25 @@ model.generate(..., references_config=references_config)
 ```
 
 ### Choosing a metric
-By default, **mbr** integrates metrics via the [Hugging Face Evaluate](https://github.com/huggingface/evaluate) library.
+By default, **mbr** uses [fastChrF](https://github.com/jvamvas/fastChrF), which is optimized for efficient comparison of many samples to many references.
+
+You can also plug in metrics from the [**Hugging Face Evaluate**](https://github.com/huggingface/evaluate) library.
 
 A full list of metrics is found [here](https://huggingface.co/metrics). Some typical choices are:
-- [ChrF](https://huggingface.co/spaces/evaluate-metric/chrf) ([Popović, 2015](https://www.aclweb.org/anthology/W15-3049/))
 - [COMET](https://huggingface.co/spaces/evaluate-metric/comet) ([Rei et al., 2020](https://aclanthology.org/2020.emnlp-main.213/))
 - [BLEURT](https://huggingface.co/spaces/evaluate-metric/bleurt) ([Sellam et al., 2020](https://aclanthology.org/2020.acl-main.704))
 
-In the MBR config, you can either specify the metric's name (e.g., `"chrf"`, `"comet"`) or pass an `evaluate.Metric` object directly.
+To use a metric from Hugging Face, either specify the metric's name (e.g., `"comet"`, `"bleurt"`) or pass an `evaluate.Metric` object directly.
 
 Since different metrics output differently structured dicts, you need to specify the `metric_output_field` that should be used as the metric score.
 
 ```python
 from evaluate import load
 
-metric = load('chrf')
+metric = load('bleu')
 mbr_config = MBRGenerationConfig(
     metric=metric,
-    metric_output_field="score",  # the ChrF metric returns a dict with a "score" field
+    metric_output_field="bleu",  # the BLEU metric returns a dict with a "bleu" field
     ...
 )
 ```
@@ -188,8 +189,9 @@ model.generate(..., metric_runner=metric_runner)
 ### Optimizations
 MBR decoding is notoriously slow. **mbr** implements some optimizations:
 - Cached encoder outputs: For encoder-decoder models, the encoder outputs are computed only once and reused during sampling.
-- Cached metric: The metric is computed only once for each unique sample–reference pair (since there will be duplicate samples and references).
-- Optimized COMET metric: Inspired by [Amrhein & Sennrich (2022)](https://aclanthology.org/2022.aacl-main.83/), sequence embeddings are cached and reused for all pairwise comparisons.
+- Optimized ChrF metric: [fastChrF](https://github.com/jvamvas/fastChrF) is used by default, which is a streamlined ChrF variant for MBR, implemented in Rust.
+- Optimized COMET metric: Inspired by [Amrhein & Sennrich (2022)](https://aclanthology.org/2022.aacl-main.83/), `CometMetricRunner` caches sequence embeddings and reuses them for all pairwise comparisons.
+- Cached metrics: Most metrics are computed only once for each unique sample–reference pair (since there will be duplicate samples and references).
 
 ## Example scripts
 
@@ -199,6 +201,9 @@ The [experiments](experiments) directory contains the code for reproductions of 
 - [MBR with neural metrics and epsilon sampling for machine translation](experiments/freitag-et-al-2023-epsilon) ([Freitag et al., 2023](https://arxiv.org/abs/2305.09860))
 - [MBR for summarization](experiments/bertsch-et-al-2023-mbr) ([Bertsch et al., 2023](https://arxiv.org/abs/2310.01387))
 
+### Other experiments
+- Comparison of [fastChrF](https://github.com/jvamvas/fastChrF) to standard sentence-level ChrF ([Popović, 2015](https://aclanthology.org/W15-3049/)) as a metric for MBR
+
 ## Related projects
 - https://github.com/roxot/mbr-nmt: Original implementation ([demo](https://colab.research.google.com/github/probabll/demo-mbr-nmt/blob/main/German-English.ipynb))
 - https://github.com/ZurichNLP/understanding-mbr: MBR with Sockeye
@@ -206,6 +211,10 @@ The [experiments](experiments) directory contains the code for reproductions of 
 - https://github.com/rainavyas/mbr_gec: MBR for Grammatical Error Correction
 
 ## Changelog
+
+- v0.3.0 (draft)
+  - Use [fastChrF](https://github.com/jvamvas/fastChrF) as default metric
+
 - v0.2.0
   - **Breaking change:** Rename `MBRGenerationConfig` to `MBRConfig`
   - **Breaking change:** `MetricRunner` now returns a `MetricOutput` dict instead of the raw tensor of scores.
