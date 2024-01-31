@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest import TestCase
 
-from transformers import AutoTokenizer, pipeline, GPT2LMHeadModel, M2M100ForConditionalGeneration
+from transformers import AutoTokenizer, pipeline, GPT2LMHeadModel, M2M100ForConditionalGeneration, set_seed
 
 from mbr import MBRConfig
 from mbr import MBR
@@ -11,6 +11,7 @@ from mbr import MBR
 class TextGenerationTestCase(TestCase):
 
     def setUp(self):
+        set_seed(42)
         self.model = MBR(GPT2LMHeadModel).from_pretrained("distilgpt2").eval()
         self.tokenizer = AutoTokenizer.from_pretrained("distilgpt2")
         self.pipeline = pipeline("text-generation", model=self.model, tokenizer=self.tokenizer)
@@ -32,6 +33,7 @@ class TextGenerationTestCase(TestCase):
 class TranslationTestCase(TestCase):
 
     def setUp(self):
+        set_seed(42)
         self.model = MBR(M2M100ForConditionalGeneration).from_pretrained("alirezamsh/small100").eval()
         self.tokenizer = AutoTokenizer.from_pretrained("alirezamsh/small100")
         self.pipeline = pipeline("translation_en_to_fr", model=self.model, tokenizer=self.tokenizer)
