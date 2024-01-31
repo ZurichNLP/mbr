@@ -40,13 +40,16 @@ class CometMetricRunner(MetricRunner):
                                       "comet.models.RegressionMetric")
         if device is not None:
             self.comet.scorer = self.comet.scorer.to(device)
+        self.comet.scorer.eval()
         self.batch_size_embed = batch_size_embed
         self.batch_size_estimate = batch_size_estimate
         self.progress_bar = progress_bar
         # We use a key-value cache, which is needed if the metric is called multiple times with similar inputs
         # (e.g. for MBR with iterative pruning).
-        self.cache = FIFOCache(maxsize=self.mbr_config.metric_cache_size)
+        self.embedding_cache = FIFOCache(maxsize=self.mbr_config.metric_cache_size)
+        self.score_cache = FIFOCache(maxsize=self.mbr_config.metric_cache_size)
 
+    @torch.no_grad()
     def _compute_str_metric(self,
                             samples: List[List[str]],
                             references: List[List[str]],
@@ -55,35 +58,47 @@ class CometMetricRunner(MetricRunner):
         if inputs is None:
             raise NotImplementedError("CometMetricRunner requires source sequences (`inputs`) to be provided")
         batch_size = len(samples[0])
-        metric_scores = torch.zeros((batch_size, self.mbr_config.num_samples, self.mbr_config.num_references))
+        metric_scores = torch.zeros((batch_size, len(samples), len(references)))
         for i in tqdm(list(range(batch_size)), desc="comet", disable=not self.progress_bar):
             # Embed all sequences
             all_samples = [sample[i] for sample in samples]
             all_references = [reference[i] for reference in references]
-            all_sequences = list(set(all_samples + all_references + inputs))
-            all_encodings = self.comet.scorer.encoder.prepare_sample(all_sequences).to(self.comet.scorer.device)
+            all_sequences = set(all_samples + all_references + inputs)
+
             all_embeddings: Dict[str, torch.FloatTensor] = {}
-            batches = itertools.zip_longest(range(0, len(all_sequences), self.batch_size_embed),
-                                            range(self.batch_size_embed, len(all_sequences), self.batch_size_embed))
-            for start_idx, end_idx in batches:
-                embeddings = self.comet.scorer.get_sentence_embedding(
-                    input_ids=all_encodings["input_ids"][start_idx:end_idx],
-                    attention_mask=all_encodings["attention_mask"][start_idx:end_idx],
-                )
-                for j in range(start_idx, end_idx if end_idx is not None else len(all_sequences)):
-                    all_embeddings[all_sequences[j]] = embeddings[j - start_idx]
+            # Populate embeddings from cache
+            for sequence in list(all_sequences):
+                if sequence in self.embedding_cache:
+                    all_embeddings[sequence] = self.embedding_cache[sequence]
+                    all_sequences.remove(sequence)
+
+            # Compute embeddings for remaining sequences
+            if all_sequences:
+                all_sequences = list(all_sequences)
+                encodings = self.comet.scorer.encoder.prepare_sample(all_sequences).to(self.comet.scorer.device)
+                batches = itertools.zip_longest(range(0, len(all_sequences), self.batch_size_embed),
+                                                range(self.batch_size_embed, len(all_sequences), self.batch_size_embed))
+                for start_idx, end_idx in batches:
+                    embeddings = self.comet.scorer.get_sentence_embedding(
+                        input_ids=encodings["input_ids"][start_idx:end_idx],
+                        attention_mask=encodings["attention_mask"][start_idx:end_idx],
+                    )
+                    for j in range(start_idx, end_idx if end_idx is not None else len(all_sequences)):
+                        embedding = embeddings[j - start_idx]
+                        all_embeddings[all_sequences[j]] = embedding
+                        self.embedding_cache[all_sequences[j]] = embedding
 
             # Collect all input triples in a list
             input_triples: Set[Tuple[str, str, str]] = set()
-            for j in range(self.mbr_config.num_samples):
-                for k in range(self.mbr_config.num_references):
+            for j in range(len(samples)):
+                for k in range(len(references)):
                     input_triples.add((inputs[i], samples[j][i], references[k][i]))
-            input_triple_scores = {}
 
-            # Check if any of the triples are in the cache
+            input_triple_scores: Dict[Tuple[str, str, str], torch.FloatTensor] = {}
+            # Populate scores from cache
             for triple in list(input_triples):
-                if triple in self.cache:
-                    input_triple_scores[triple] = self.cache[triple]
+                if triple in self.score_cache:
+                    input_triple_scores[triple] = self.score_cache[triple]
                     input_triples.remove(triple)
 
             # Compute scores for remaining input triples
@@ -102,10 +117,10 @@ class CometMetricRunner(MetricRunner):
                     triple = batch[j - start_idx]
                     score = batch_scores.score[j - start_idx]
                     input_triple_scores[triple] = score
-                    self.cache[triple] = score
+                    self.score_cache[triple] = score
 
-            for j in range(self.mbr_config.num_samples):
-                for k in range(self.mbr_config.num_references):
+            for j in range(len(samples)):
+                for k in range(len(references)):
                     metric_scores[i, j, k] = input_triple_scores[(inputs[i], samples[j][i], references[k][i])]
 
         return metric_scores

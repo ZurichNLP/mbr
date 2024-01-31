@@ -40,7 +40,7 @@ class MetricRunner:
         # Ensure that mbr_config.metric_kwargs is hashable (because _compute_metric() uses lru_cache)
         if mbr_config.metric_kwargs:
             try:
-                hash(self.mbr_config.metric_kwargs)
+                hash(tuple(self.mbr_config.metric_kwargs))
             except TypeError as e:
                 raise TypeError(f"mbr_config.metric_kwargs must be hashable.") from e
         self.tokenizer = tokenizer
@@ -56,6 +56,8 @@ class MetricRunner:
             metric = evaluate.load(metric, self.mbr_config.metric_config_name)
         else:
             raise ValueError(f"Invalid metric type: {type(metric)}")
+        if metric.name == "comet":
+            metric.scorer.eval()
         return metric
 
     def __call__(self,
@@ -111,11 +113,11 @@ class MetricRunner:
                             inputs: List[str] = None,
                             ) -> torch.FloatTensor:
         batch_size = len(samples[0])
-        metric_scores = torch.zeros((batch_size, self.mbr_config.num_samples, self.mbr_config.num_references))
+        metric_scores = torch.zeros((batch_size, len(samples), len(references)))
         for i in range(batch_size):
-            for j in range(self.mbr_config.num_samples):
+            for j in range(len(samples)):
                 sample = samples[j][i]
-                for k in range(self.mbr_config.num_references):
+                for k in range(len(references)):
                     reference = references[k][i]
                     if inputs is not None:
                         score = self.compute_metric(

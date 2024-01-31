@@ -117,4 +117,5 @@ class MBRConfig:
         Note that some parameters are best validated at generate runtime, as they may depend on other inputs and/or the
         model, such as parameters related to the generation length.
         """
-        pass
+        if self.metric_cache_size <= 0:
+            raise ValueError(f"`metric_cache_size` ({self.metric_cache_size}) must be greater than 0.")
