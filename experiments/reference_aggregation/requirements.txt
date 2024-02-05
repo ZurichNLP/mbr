@@ -1,0 +1,8 @@
+git+https://github.com/jvamvas/fairseq.git@epsilon  # Adds epsilon sampling
+scikit_learn==1.3.2
+sacremoses==0.1.1
+fastBPE==0.1.0
+requests
+jsonlines
+unbabel-comet==2.1.1
+evaluate==0.4.1

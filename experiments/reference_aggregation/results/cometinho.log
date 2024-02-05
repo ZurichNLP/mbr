@@ -1,0 +1,80 @@
+en-de
+baselines
+wmt22.en-de.beam4.de	score: 0.5536
+wmt22.en-de.epsilon0.02.seed0.de	score: 0.4571
+chrf
+mbr.wmt22.en-de.pairwise.n1024.epsilon0.02.seed0.chrf.de	score: 0.5560
+mbr.wmt22.en-de.aggregate.n1024.epsilon0.02.seed0.chrf.de	score: 0.5581
+mbr.wmt22.en-de.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.chrf.de	score: 0.5584
+cometinho
+mbr.wmt22.en-de.pairwise.n1024.epsilon0.02.seed0.cometinho.de	score: 0.6131
+mbr.wmt22.en-de.aggregate.n1024.epsilon0.02.seed0.cometinho.de	score: 0.6110
+mbr.wmt22.en-de.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.cometinho.de	score: 0.6138
+comet22
+mbr.wmt22.en-de.pairwise.n1024.epsilon0.02.seed0.comet22.de	score: 0.5791
+mbr.wmt22.en-de.aggregate.n1024.epsilon0.02.seed0.comet22.de	score: 0.5783
+mbr.wmt22.en-de.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.comet22.de	score: 0.5796
+coarse-to-fine
+mbr.wmt22.en-de.coarse_to_fine.top20.n1024.epsilon0.02.seed0.chrf-to-comet22.de	score: 0.5709
+mbr.wmt22.en-de.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.chrf-to-comet22.de	score: 0.5729
+
+de-en
+baselines
+wmt22.de-en.beam4.en	score: 0.5280
+wmt22.de-en.epsilon0.02.seed0.en	score: 0.4226
+chrf
+mbr.wmt22.de-en.pairwise.n1024.epsilon0.02.seed0.chrf.en	score: 0.5491
+mbr.wmt22.de-en.aggregate.n1024.epsilon0.02.seed0.chrf.en	score: 0.5500
+mbr.wmt22.de-en.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.chrf.en	score: 0.5491
+cometinho
+mbr.wmt22.de-en.pairwise.n1024.epsilon0.02.seed0.cometinho.en	score: 0.5933
+mbr.wmt22.de-en.aggregate.n1024.epsilon0.02.seed0.cometinho.en	score: 0.5878
+mbr.wmt22.de-en.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.cometinho.en	score: 0.5916
+comet22
+mbr.wmt22.de-en.pairwise.n1024.epsilon0.02.seed0.comet22.en	score: 0.5613
+mbr.wmt22.de-en.aggregate.n1024.epsilon0.02.seed0.comet22.en	score: 0.5621
+mbr.wmt22.de-en.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.comet22.en	score: 0.5624
+coarse-to-fine
+mbr.wmt22.de-en.coarse_to_fine.top20.n1024.epsilon0.02.seed0.chrf-to-comet22.en	score: 0.5611
+mbr.wmt22.de-en.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.chrf-to-comet22.en	score: 0.5619
+
+en-ru
+baselines
+wmt22.en-ru.beam4.ru	score: 0.4989
+wmt22.en-ru.epsilon0.02.seed0.ru	score: 0.4081
+chrf
+mbr.wmt22.en-ru.pairwise.n1024.epsilon0.02.seed0.chrf.ru	score: 0.5538
+mbr.wmt22.en-ru.aggregate.n1024.epsilon0.02.seed0.chrf.ru	score: 0.5521
+mbr.wmt22.en-ru.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.chrf.ru	score: 0.5541
+cometinho
+mbr.wmt22.en-ru.pairwise.n1024.epsilon0.02.seed0.cometinho.ru	score: 0.6693
+mbr.wmt22.en-ru.aggregate.n1024.epsilon0.02.seed0.cometinho.ru	score: 0.6575
+mbr.wmt22.en-ru.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.cometinho.ru	score: 0.6669
+comet22
+mbr.wmt22.en-ru.pairwise.n1024.epsilon0.02.seed0.comet22.ru	score: 0.6046
+mbr.wmt22.en-ru.aggregate.n1024.epsilon0.02.seed0.comet22.ru	score: 0.5991
+mbr.wmt22.en-ru.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.comet22.ru	score: 0.6030
+coarse-to-fine
+mbr.wmt22.en-ru.coarse_to_fine.top20.n1024.epsilon0.02.seed0.chrf-to-comet22.ru	score: 0.5861
+mbr.wmt22.en-ru.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.chrf-to-comet22.ru	score: 0.5878
+
+ru-en
+baselines
+wmt22.ru-en.beam4.en	score: 0.6586
+wmt22.ru-en.epsilon0.02.seed0.en	score: 0.5255
+chrf
+mbr.wmt22.ru-en.pairwise.n1024.epsilon0.02.seed0.chrf.en	score: 0.6732
+mbr.wmt22.ru-en.aggregate.n1024.epsilon0.02.seed0.chrf.en	score: 0.6695
+mbr.wmt22.ru-en.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.chrf.en	score: 0.6712
+cometinho
+mbr.wmt22.ru-en.pairwise.n1024.epsilon0.02.seed0.cometinho.en	score: 0.7288
+mbr.wmt22.ru-en.aggregate.n1024.epsilon0.02.seed0.cometinho.en	score: 0.7250
+mbr.wmt22.ru-en.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.cometinho.en	score: 0.7286
+comet22
+mbr.wmt22.ru-en.pairwise.n1024.epsilon0.02.seed0.comet22.en	score: 0.6856
+mbr.wmt22.ru-en.aggregate.n1024.epsilon0.02.seed0.comet22.en	score: 0.6910
+mbr.wmt22.ru-en.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.comet22.en	score: 0.6871
+coarse-to-fine
+mbr.wmt22.ru-en.coarse_to_fine.top20.n1024.epsilon0.02.seed0.chrf-to-comet22.en	score: 0.6870
+mbr.wmt22.ru-en.aggregate_to_fine.top20.n1024.epsilon0.02.seed0.chrf-to-comet22.en	score: 0.6846
+

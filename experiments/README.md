@@ -1,7 +1,10 @@
 
 # Experiments using the [**mbr**](https://github.com/ZurichNLP/mbr) package
 
-**Reproductions of experiments from the following papers:**
+**Code for research papers:**
+- Efficient Minimum Bayes Risk Decoding with Reference Aggregation (Vamvas & Sennrich, 2024)
+
+**Reproductions of experiments from related research papers:**
 
 - It's MBR All the Way Down: Modern Generation Techniques Through the Lens of Minimum Bayes Risk (Bertsch et al., 2023)
 - Epsilon Sampling Rocks: Investigating Sampling Strategies for Minimum Bayes Risk Decoding for Machine Translation (Freitag et al., 2023)
