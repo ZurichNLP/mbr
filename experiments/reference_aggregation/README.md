@@ -1,4 +1,4 @@
-## Code for the paper "Efficient Minimum Bayes Risk Decoding with Reference Aggregation"
+## Code for the paper "Linear-time Minimum Bayes Risk Decoding with Reference Aggregation"
 
 - The research code in this directory implements reference aggregation, an efficiency method for MBR that uses aggregate reference representations for faster utility estimation.
 - We apply reference aggregation to two metrics: ChrF and COMET.

@@ -203,7 +203,7 @@ The [experiments](experiments) directory contains the code for reproductions of 
 - [MBR for summarization](experiments/bertsch-et-al-2023-mbr) ([Bertsch et al., 2023](https://arxiv.org/abs/2310.01387))
 
 ### Other experiments
-- Code for the paper "Efficient Minimum Bayes Risk Decoding with Reference Aggregation" (Vamvas & Sennrich, 2024)
+- Code for the paper "Linear-time Minimum Bayes Risk Decoding with Reference Aggregation" (Vamvas & Sennrich, 2024)
 - Comparison of [fastChrF](https://github.com/jvamvas/fastChrF) to standard sentence-level ChrF ([Popović, 2015](https://aclanthology.org/W15-3049/)) as a metric for MBR
 
 ## Related projects

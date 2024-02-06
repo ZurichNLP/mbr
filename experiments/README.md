@@ -2,7 +2,7 @@
 # Experiments using the [**mbr**](https://github.com/ZurichNLP/mbr) package
 
 **Code for research papers:**
-- Efficient Minimum Bayes Risk Decoding with Reference Aggregation (Vamvas & Sennrich, 2024)
+- Linear-time Minimum Bayes Risk Decoding with Reference Aggregation (Vamvas & Sennrich, 2024)
 
 **Reproductions of experiments from related research papers:**
 

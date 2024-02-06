@@ -128,7 +128,7 @@ class CometMetricRunner(MetricRunner):
 
 class AggregateCometMetricRunner(CometMetricRunner):
     """
-    Implements reference aggregation as described in "Efficient Minimum Bayes Risk Decoding with Reference Aggregation"
+    Implements reference aggregation as described in "Linear-time Minimum Bayes Risk Decoding with Reference Aggregation"
      (Vamvas & Sennrich, 2024)
     """
 
