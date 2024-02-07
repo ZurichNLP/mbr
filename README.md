@@ -192,7 +192,7 @@ MBR decoding is notoriously slow. **mbr** implements some optimizations:
 - Optimized ChrF metric: [fastChrF](https://github.com/jvamvas/fastChrF) is used by default, which is a streamlined ChrF variant for MBR, implemented in Rust.
 - Cached metrics: Most metrics are computed only once for each unique sample–reference pair (since there will be duplicate samples and references).
 - Optimized COMET metric: Inspired by [Amrhein & Sennrich (2022)](https://aclanthology.org/2022.aacl-main.83/), `CometMetricRunner` caches sequence embeddings and reuses them for all pairwise comparisons.
-- Reference aggregation for COMET (Vamvas & Sennrich, 2024): Consider using `mbr.metrics.comet.AggregateCometMetricRunner` instead of the default `CometMetricRunner` if you have many references.
+- Reference aggregation for COMET ([Vamvas & Sennrich, 2024](https://arxiv.org/abs/2402.04251)): Consider using `mbr.metrics.comet.AggregateCometMetricRunner` instead of the default `CometMetricRunner` if you have many references.
 
 ## Example scripts
 
@@ -202,9 +202,8 @@ The [experiments](experiments) directory contains the code for reproductions of 
 - [MBR with neural metrics and epsilon sampling for machine translation](experiments/freitag-et-al-2023-epsilon) ([Freitag et al., 2023](https://arxiv.org/abs/2305.09860))
 - [MBR for summarization](experiments/bertsch-et-al-2023-mbr) ([Bertsch et al., 2023](https://arxiv.org/abs/2310.01387))
 
-### Other experiments
-- Code for the paper "Linear-time Minimum Bayes Risk Decoding with Reference Aggregation" (Vamvas & Sennrich, 2024)
-- Comparison of [fastChrF](https://github.com/jvamvas/fastChrF) to standard sentence-level ChrF ([Popović, 2015](https://aclanthology.org/W15-3049/)) as a metric for MBR
+### Code for research papers
+- [Code for the paper "Linear-time Minimum Bayes Risk Decoding with Reference Aggregation" (Vamvas & Sennrich, 2024)](experiments/reference_aggregation)
 
 ## Related projects
 - https://github.com/roxot/mbr-nmt: Original implementation ([demo](https://colab.research.google.com/github/probabll/demo-mbr-nmt/blob/main/German-English.ipynb))
@@ -215,9 +214,9 @@ The [experiments](experiments) directory contains the code for reproductions of 
 ## Changelog
 
 - v0.3.0 (draft)
-  - New feature: Reference Aggregation (Vamvas & Sennrich, 2024):
+  - New feature: Reference Aggregation ([Vamvas & Sennrich, 2024](https://arxiv.org/abs/2402.04251)):
     - Set [fastChrF](https://github.com/jvamvas/fastChrF) with reference aggregation as default metric
-    - Add `AggregateCometMetricRunner` for using reference aggregation with COMET
+    - Add `AggregateCometMetricRunner` to allow for reference aggregation with COMET
   - **Bugfix**: Disable dropout for COMET metric
 
 - v0.2.0
@@ -227,3 +226,16 @@ The [experiments](experiments) directory contains the code for reproductions of 
   - Allow that the number of references can be larger than the number of samples (if generated separately from the samples).
   - Remove `GenerationConfig` as parent class of `MBRConfig` 
 
+## Citation
+When using this code for research, please cite the following paper:
+
+```bibtex
+@misc{vamvas-sennrich-2024-linear,
+      title={Linear-time Minimum Bayes Risk Decoding with Reference Aggregation},
+      author={Jannis Vamvas and Rico Sennrich},
+      year={2024},
+      eprint={2402.04251},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```

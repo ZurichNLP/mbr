@@ -1,4 +1,4 @@
-## Code for the paper "Linear-time Minimum Bayes Risk Decoding with Reference Aggregation"
+## Code for the paper ["Linear-time Minimum Bayes Risk Decoding with Reference Aggregation"](https://arxiv.org/abs/2402.04251)
 
 - The research code in this directory implements reference aggregation, an efficiency method for MBR that uses aggregate reference representations for faster utility estimation.
 - We apply reference aggregation to two metrics: ChrF and COMET.
@@ -86,3 +86,16 @@ python scripts/save_src_and_ref.py --testset wmt22 --language-pair en-de
 
 #### Evaluating the translations
 - Use a tool of your choice (e.g., https://github.com/mjpost/sacrebleu) to perform the evaluation.
+
+
+## Citation
+```bibtex
+@misc{vamvas-sennrich-2024-linear,
+      title={Linear-time Minimum Bayes Risk Decoding with Reference Aggregation},
+      author={Jannis Vamvas and Rico Sennrich},
+      year={2024},
+      eprint={2402.04251},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```

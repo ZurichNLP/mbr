@@ -129,7 +129,7 @@ class CometMetricRunner(MetricRunner):
 class AggregateCometMetricRunner(CometMetricRunner):
     """
     Implements reference aggregation as described in "Linear-time Minimum Bayes Risk Decoding with Reference Aggregation"
-     (Vamvas & Sennrich, 2024)
+     (Vamvas & Sennrich, 2024) https://arxiv.org/abs/2402.04251
     """
 
     def __call__(self,
