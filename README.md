@@ -15,6 +15,7 @@ pip install mbr
 Requirements:
 - Python >= 3.9
 - PyTorch
+- Hugging Face transformers < 4.39
 
 ## Usage
 The main components of **mbr** are:
