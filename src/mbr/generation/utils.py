@@ -224,6 +224,9 @@ class MBRGenerationMixin(GenerationMixin):
         generation_config.validate()
         self._validate_model_kwargs(model_kwargs.copy())
 
+        if generation_config.num_return_sequences > 1:
+            raise ValueError("MBR decoding does not support `num_return_sequences` > 1.")
+
         if references_config is not None:
             references_config.validate()
 

@@ -149,7 +149,6 @@ class DecoderOnlyTestCase(TestCase):
             generation_config=generation_config,
             mbr_config=mbr_config,
             tokenizer=self.tokenizer,
-            do_sample=True,
         )
         output = self.tokenizer.batch_decode(output, skip_special_tokens=True)
         self.assertEqual(1, len(output))
@@ -179,11 +178,40 @@ class DecoderOnlyTestCase(TestCase):
             references_config=references_config,
             mbr_config=mbr_config,
             tokenizer=self.tokenizer,
-            do_sample=True,
         )
         output = self.tokenizer.batch_decode(output, skip_special_tokens=True)
         self.assertEqual(1, len(output))
         self.assertTrue(output[0].startswith("Hello, my name is"))
+
+    def test_num_return_sequences(self):
+        """
+        generation_config.num_return_sequences > 1 is not supported for MBR; should raise an error.
+        """
+        mbr_config = MBRConfig(
+            num_samples=5,
+        )
+        generation_config = GenerationConfig.from_pretrained("distilgpt2",
+            do_sample=True,
+            num_return_sequences=2,
+        )
+        input_sentences = [
+            "Hello, my name is",
+        ]
+        encoding = self.tokenizer(input_sentences, return_tensors="pt")
+        with self.assertRaises(ValueError):
+            self.model.generate(
+                **encoding,
+                generation_config=generation_config,
+                mbr_config=mbr_config,
+                tokenizer=self.tokenizer,
+            )
+        with self.assertRaises(ValueError):
+            self.model.generate(
+                **encoding,
+                mbr_config=mbr_config,
+                tokenizer=self.tokenizer,
+                num_return_sequences=2,
+            )
 
 
 @unittest.skipIf(os.getenv("SKIP_SLOW_TESTS", False), "Requires extra dependencies")
