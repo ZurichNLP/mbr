@@ -2,7 +2,7 @@
 [![Main](https://github.com/ZurichNLP/mbr/workflows/unittest/badge.svg)](https://github.com/ZurichNLP/mbr/actions/workflows/unittest.yml)
 [![PyPI](https://img.shields.io/pypi/v/mbr)](https://pypi.python.org/pypi/mbr/)
 
-**mbr** adds Sampling-based Minimum Bayes Risk decoding to [Hugging Face transformers](https://github.com/huggingface/transformers). Originally proposed by [Eikema & Aziz (2022)](https://aclanthology.org/2022.emnlp-main.754/), this technique is a risk-minimizing algorithm for generating text with a language model.
+**mbr** adds Sampling-based Minimum Bayes Risk decoding to [Hugging Face transformers](https://github.com/huggingface/transformers). Originally proposed by [Eikema & Aziz (2022)](https://aclanthology.org/2022.emnlp-main.754/), this technique is a risk-minimizing algorithm for generating text with a language model. This repository implements several optimizations for MBR decoding. Most notably, **mbr** introduces reference aggregation [Vamvas & Sennrich (2024)](https://arxiv.org/abs/2402.04251).
 
 Pronounce: _ember_ /ˈɛm.bɚ/
 
